@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36915.13 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KnowledgeBaseApp", "KnowledgeBaseApp\KnowledgeBaseApp.csproj", "{B405A8A2-EBAB-4C36-ADE1-96F1EA881831}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B405A8A2-EBAB-4C36-ADE1-96F1EA881831}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B405A8A2-EBAB-4C36-ADE1-96F1EA881831}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B405A8A2-EBAB-4C36-ADE1-96F1EA881831}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B405A8A2-EBAB-4C36-ADE1-96F1EA881831}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {64FC26BD-D450-4996-9E74-39DA7AF348F4}
+	EndGlobalSection
+EndGlobal
