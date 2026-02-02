@@ -16,13 +16,12 @@ namespace KnowledgeBaseApp.Models
 
         [Required]
         [Display(Name = "Съдържание")]
-        public string Content { get; set; } // Тук ще пазим HTML от редактора
+        public string Content { get; set; }
 
         public DateTime CreatedOn { get; set; } = DateTime.Now;
 
         public int ViewCount { get; set; } = 0;
 
-        // Връзка с Категория
         [Required]
         [Display(Name = "Категория")]
         public int CategoryId { get; set; }
@@ -30,14 +29,11 @@ namespace KnowledgeBaseApp.Models
         [ForeignKey("CategoryId")]
         public virtual Category? Category { get; set; }
 
-        // Връзка с Автор (Потребител)
-        // Използваме IdentityUser, който идва с ASP.NET Core
         public string AuthorId { get; set; }
 
         [ForeignKey("AuthorId")]
         public virtual IdentityUser? Author { get; set; }
 
-        // Връзка с Рейтинги
         public virtual ICollection<Vote>? Votes { get; set; }
     }
 }

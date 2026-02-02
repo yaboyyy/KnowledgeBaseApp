@@ -17,7 +17,6 @@ namespace KnowledgeBaseApp.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<IdentityUser> _userManager;
 
-        // Тук "инжектираме" и мениджъра за потребители, за да знаем кой е логнат
         public ArticlesController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
@@ -25,7 +24,6 @@ namespace KnowledgeBaseApp.Controllers
         }
 
         // GET: Articles
-        // Тук добавихме логика за ТЪРСЕНЕ (searchString)
         public async Task<IActionResult> Index(string searchString)
         {
             var articles = _context.Articles.Include(a => a.Author).Include(a => a.Category).AsQueryable();
@@ -50,7 +48,6 @@ namespace KnowledgeBaseApp.Controllers
 
             if (article == null) return NotFound();
 
-            // Увеличаваме брояча на преглежданията
             article.ViewCount++;
             _context.Update(article);
             await _context.SaveChangesAsync();
@@ -59,7 +56,7 @@ namespace KnowledgeBaseApp.Controllers
         }
 
         // GET: Articles/Create
-        [Authorize] // Само логнати могат да виждат тази страница
+        [Authorize]
         public IActionResult Create()
         {
             ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
@@ -72,13 +69,11 @@ namespace KnowledgeBaseApp.Controllers
         [Authorize]
         public async Task<IActionResult> Create([Bind("Id,Title,Content,CategoryId")] Article article)
         {
-            // Махаме AuthorId от проверката на модела, защото ние ще го зададем ръчно
             ModelState.Remove("Author");
             ModelState.Remove("AuthorId");
 
             if (ModelState.IsValid)
             {
-                // Взимаме ID-то на текущия потребител
                 article.AuthorId = _userManager.GetUserId(User);
                 article.CreatedOn = DateTime.Now;
                 article.ViewCount = 0;
@@ -100,11 +95,10 @@ namespace KnowledgeBaseApp.Controllers
             var article = await _context.Articles.FindAsync(id);
             if (article == null) return NotFound();
 
-            // Проверка: Дали текущият потребител е авторът?
             var currentUserId = _userManager.GetUserId(User);
             if (article.AuthorId != currentUserId)
             {
-                return Forbid(); // Забранено, ако не си авторът
+                return Forbid();
             }
 
             ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", article.CategoryId);
@@ -173,6 +167,40 @@ namespace KnowledgeBaseApp.Controllers
         private bool ArticleExists(int id)
         {
             return _context.Articles.Any(e => e.Id == id);
+        }
+
+        [HttpPost]
+        [Authorize] 
+        public async Task<IActionResult> Vote(int id)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            
+            var existingVote = await _context.Votes
+                .FirstOrDefaultAsync(v => v.ArticleId == id && v.UserId == user.Id);
+
+            if (existingVote != null)
+            {
+                
+                _context.Votes.Remove(existingVote);
+            }
+            else
+            {
+                
+                var vote = new Vote
+                {
+                    ArticleId = id,
+                    UserId = user.Id,
+                    IsUpvote = true 
+                };
+                _context.Votes.Add(vote);
+            }
+
+            await _context.SaveChangesAsync();
+
+            
+            return Redirect(Request.Headers["Referer"].ToString());
         }
     }
 }

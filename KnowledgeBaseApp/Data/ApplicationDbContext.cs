@@ -17,8 +17,6 @@ namespace KnowledgeBaseApp.Data
         {
             base.OnModelCreating(builder);
 
-            // Това казва на SQL Server: 
-            // "Ако потребител бъде изтрит, не трий автоматично вотовете му, за да няма цикъл."
             builder.Entity<Vote>()
                 .HasOne(v => v.User)
                 .WithMany()

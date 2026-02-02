@@ -16,7 +16,6 @@ namespace KnowledgeBaseApp.Models
         [Display(Name = "Описание")]
         public string Description { get; set; }
 
-        // Връзка: Една категория има много статии
         public virtual ICollection<Article>? Articles { get; set; }
     }
 }

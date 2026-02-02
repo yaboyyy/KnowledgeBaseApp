@@ -1,4 +1,6 @@
-﻿@model KnowledgeBaseApp.Models.Article
+﻿@using Microsoft.AspNetCore.Identity
+@inject UserManager<IdentityUser> UserManager
+@model KnowledgeBaseApp.Models.Article
 
 @{
     ViewData["Title"] = "Details";
@@ -49,6 +51,9 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+    @if (UserManager.GetUserId(User) == Model.AuthorId)
+    {
+        <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> <span> | </span>
+    }
     <a asp-action="Index">Back to List</a>
 </div>

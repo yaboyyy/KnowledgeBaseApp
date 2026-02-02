@@ -1,4 +1,6 @@
-﻿@model IEnumerable<KnowledgeBaseApp.Models.Article>
+﻿@using Microsoft.AspNetCore.Identity
+@inject UserManager<IdentityUser> UserManager
+@model IEnumerable<KnowledgeBaseApp.Models.Article>
 
 @{
     ViewData["Title"] = "Index";
@@ -54,11 +56,18 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Author.UserName)
             </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+
+                    @if (UserManager.GetUserId(User) == item.AuthorId)
+                    {
+                        <span> | </span>
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+
+                        <span> | </span>
+                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    }
+                </td>
         </tr>
 }
     </tbody>

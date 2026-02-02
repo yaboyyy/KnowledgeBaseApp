@@ -1,8 +1,69 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@using Microsoft.AspNetCore.Identity
+@inject UserManager<IdentityUser> UserManager
+@model IEnumerable<KnowledgeBaseApp.Models.Article>
+
+@{
+    ViewData["Title"] = "Начало";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="text-center mb-5">
+    <h1 class="display-4">Добре дошли в Knowledge Base</h1>
+    <p class="lead">Споделяй знание, откривай решения.</p>
 </div>
+
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-header bg-transparent border-bottom-0">
+                    <span class="badge bg-primary">@item.Category?.Name</span>
+                    <small class="text-muted float-end">@item.CreatedOn.ToString("dd.MM.yyyy")</small>
+                </div>
+
+                <div class="card-body">
+                    <h5 class="card-title text-truncate">@item.Title</h5>
+                    <p class="card-text text-muted">
+                        Автор: <span class="fw-bold">@item.Author?.UserName</span>
+                    </p>
+
+                    <div class="d-flex align-items-center mb-3">
+                        <span class="text-warning fs-5 me-1">★</span>
+                        <strong>@(item.Votes?.Count(v => v.IsUpvote) ?? 0) харесвания</strong>
+                    </div>
+                </div>
+
+                <div class="card-footer bg-transparent border-top-0 d-flex justify-content-between">
+                    <a asp-controller="Articles" asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-primary btn-sm">
+                        Прочети статията
+                    </a>
+
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <form asp-controller="Articles" asp-action="Vote" asp-route-id="@item.Id" method="post">
+                            @{
+                                var userId = UserManager.GetUserId(User);
+                                var hasVoted = item.Votes != null && item.Votes.Any(v => v.UserId == userId);
+                                var btnClass = hasVoted ? "btn-success" : "btn-outline-secondary";
+                                var btnText = hasVoted ? "Харесано" : "Харесай";
+                            }
+                            <button type="submit" class="btn @btnClass btn-sm">@btnText</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-outline-secondary btn-sm">Влез за вот</a>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info text-center">
+        Все още няма добавени статии. Бъди първият! <br />
+        <a asp-controller="Articles" asp-action="Create" class="btn btn-primary mt-2">Създай статия</a>
+    </div>
+}
